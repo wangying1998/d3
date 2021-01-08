@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force</title>
+</head>
+<body>
+    <script src="../js/d3.js"></script>
+    <script>
+        var width = 600, height = 600;
+        var svg = d3.select('body').append('svg').attr({ width, height });
+        var nodes = [
+            { name: "GuiLin" }, 
+            { name: "GuangZhou" },
+            { name: "XiaMen" },
+            { name: "HangZhou" },
+            { name: "ShangHai" },
+            { name: "QingDao" },
+            { name: "TianJin" },
+            { name: "BeiJing" },
+            { name: "ChangChun" },
+            { name: "XiAn" },
+            { name: "WuluMuQi" },
+            { name: "LaSa" },
+            { name: "ChengDu" }
+        ];
+        
+        var edges = [
+            { source : 0  , target: 1 } ,
+            { source : 1  , target: 2 } ,
+            { source : 2  , target: 3 } ,
+            { source : 3  , target: 4 } ,
+            { source : 4  , target: 5 } ,
+            { source : 5  , target: 6 } ,
+            { source : 6  , target: 7 } ,
+            { source : 7  , target: 8 } ,
+            { source : 8  , target: 9 } ,
+            { source : 9  , target: 10 } ,
+            { source : 10 , target: 11 } ,
+            { source : 11 , target: 12 } ,
+            { source : 12 , target: 0 }
+        ];
+        var force = d3.layout.force()       // 这步完成了数据转换
+                    .nodes(nodes)
+                    .links(edges)
+                    .size([width, height])
+                    .linkDistance(200)
+                    .charge([-100])
+                    .start();
+
+        var svg_edges = svg.selectAll('line').data(edges).enter()
+                        .append('line').style({
+                            'stroke': '#ccc',
+                            'stroke-width': 1
+                        });
+        var color = d3.scale.category10();
+        var svg_nodes = svg.selectAll('circle').data(nodes).enter()
+                        .append('circle').attr({
+                            'r': 15,
+                            'fill': (d,i)=>{
+                                return color(i);
+                            }
+                        }).call(force.drag);
+
+        force.on('tick', function(){
+            svg_edges.attr({
+                'x1': d=> d.source.x,
+                'y1': d=> d.source.y,
+                'x2': d=> d.target.x,
+                'y2': d=> d.target.y
+            });
+
+            svg_nodes.attr({
+                'cx': d => d.x,
+                'cy': d => d.y
+            });
+        });
+        // svg_nodes.append('text').attr({
+        //     'dx': d=>{
+        //         console.log(d)
+        //         return d.x;
+        //     },
+        //     'dy': d=>{
+        //         return d.y;
+        //     },
+        //     'fill': '#000',
+        //     'font-size': 14
+        // })
+        // .text(d => d.name);
+        
+    </script>
+</body>
+</html>

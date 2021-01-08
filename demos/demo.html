@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo</title>
+</head>
+<style>
+    .axis path, .axis line{
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+    .axis text {
+        font-size: 11px;
+    }
+</style>
+<body>
+    <div id="box"></div>
+</body>
+</html>
+<script type="text/javascript" src="../js/d3.js"></script>
+<script>
+    var width = 500, height = 500;
+    var svg = d3.select('#box').append('svg').attr({
+        width, height
+    });
+    var dataList = [30, 28, 50, 43, 24];
+    var xScale = d3.scale.linear().domain([0, d3.max(dataList)]).range([0, 500]).nice();
+    var axis = d3.svg.axis().scale(xScale).orient('bottom');
+
+    svg.selectAll('rect').data(dataList).enter()
+        .append('rect').attr({
+            "x": 10,
+            "y": (d,i)=>{
+                return i*30
+            },
+            "width": xScale,
+            "height": 25,
+            "fill": 'orangered'
+        });
+    
+    svg.append('g').attr({
+        "class": 'axis',
+        "transform": 'translate(10, 160)'
+    })
+    .call(axis);
+</script>

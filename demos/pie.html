@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pie</title>
+</head>
+<body>
+    
+    <script src="../js/d3.js"></script>
+    <script>
+        var width = 300, height = 300;
+        var svg = d3.select('body').append('svg').attr({ width, height });
+        
+        var dataset = [ 30, 10, 43, 55, 13 ];
+        
+        var pie = d3.layout.pie();
+        var data = pie(dataset);
+        // 用弧线作图
+        var outerRadius = width / 2;
+        var innerRadius = width / 4;
+
+        var arc = d3.svg.arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius);
+
+        var arcs = svg.selectAll('g').data(data).enter()
+                    .append('g')
+                    .attr('transform', 'translate(' + outerRadius + ',' + outerRadius + ')');
+
+        var color = d3.scale.category10();
+        // 添加路径
+        arcs.append('path').attr({
+            'fill': (d,i)=>{
+                return color(i);
+            },
+            'd': (d,i)=>{
+                return arc(d);
+            }
+        });
+        // 在每一个弧线中心添加文本
+        arcs.append('text').attr({
+            'transform': (d,i)=>{
+                return 'translate('+ arc.centroid(d) +')'
+            },        // 该方法可以计算出弧线的中心
+            'text-anchor': 'middle',
+            'fill': '#fff'
+        }).text((d,i)=>{
+            return d.value;     // 注意返回的不是d，上面对数据进行了转换
+        });
+
+        
+    </script>
+</body>
+</html>

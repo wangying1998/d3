@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template</title>
+</head>
+<body>
+    <script src="../js/d3.js"></script>
+    <script>
+        var width = 600, height = 600;
+        var svg = d3.select('body').append('svg').attr({ width, height });
+        var pack = d3.layout.pack().size([width, height]).radius(20);
+        d3.json('city.json', function(error, root){
+            var nodes = pack.nodes(root);
+            var links = pack.links(nodes)
+            console.log(nodes, links);
+            var node_s = svg.selectAll('circle').data(nodes).enter()
+                .append('circle').attr({
+                    'fill': 'rgb(31,119,180)',
+                    'fill-opacity': '0.4',
+                    'cx': d => d.x,
+                    'cy': d => d.y,
+                    'r': d => d.r
+                }).on('mouseover', function(d,i){
+                    d.children ? '' : d3.select(this).attr('fill', 'yellow');
+                }).on('mouseout', function(){
+                    d3.select(this).transition().duration(1000).attr({
+                        'fill': 'rgb(31,119,180)',
+                        'fill-opacity': '0.4',
+                    })
+                });
+                svg.selectAll('text').data(nodes).enter()
+                    .append('text').attr({
+                        'x': d => d.x,
+                        'y': d => d.y,
+                        'text-anchor': 'middle',
+                        'font-size': 10,
+                        'fill': d=>d.children?'none':'#fff'
+                    }).text(d => d.name);
+        })
+    </script>
+</body>
+</html>
